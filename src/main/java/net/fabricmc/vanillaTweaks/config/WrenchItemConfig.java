@@ -1,42 +1,49 @@
 package net.fabricmc.vanillaTweaks.config;
 
+import com.google.gson.JsonObject;
+import net.fabricmc.vanillaTweaks.VanillaTweaks;
 import net.minecraft.block.Block;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import org.apache.logging.log4j.LogManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class WrenchItemConfig extends ItemConfig {
+public class WrenchItemConfig extends EnabledConfig {
+	public static final String BLOCKS = "blocks";
+	private static final List<Object> DEFAULT_BLOCKS = Arrays.asList(
+			"minecraft:repeater",
+			"minecraft:comparator",
+			"minecraft:observer",
+			"minecraft:dispenser",
+			"minecraft:dropper",
+			"minecraft:hopper",
+			"minecraft:sticky_piston",
+			"minecraft:piston");
 	private List<Block> list;
 
-	public WrenchItemConfig(String name) {
-		super(name);
-
+	public WrenchItemConfig(String name, JsonObject json) {
+		super(name, json);
 		this.list = new ArrayList<>();
-		this.list.add(Registry.BLOCK.get(new Identifier("minecraft:repeater")));
-		this.list.add(Registry.BLOCK.get(new Identifier("minecraft:comparator")));
-		this.list.add(Registry.BLOCK.get(new Identifier("minecraft:observer")));
-		this.list.add(Registry.BLOCK.get(new Identifier("minecraft:dispenser")));
-		this.list.add(Registry.BLOCK.get(new Identifier("minecraft:dropper")));
-		this.list.add(Registry.BLOCK.get(new Identifier("minecraft:hopper")));
-		this.list.add(Registry.BLOCK.get(new Identifier("minecraft:sticky_piston")));
-		this.list.add(Registry.BLOCK.get(new Identifier("minecraft:piston")));
 
-		this.list.stream()
-				.filter(e -> e.getDefaultState().getProperties().stream()
-				.noneMatch(p -> p instanceof DirectionProperty)).forEach(e -> {
-					String id = Registry.BLOCK.getId(e).toString();
-			LogManager.getLogger().warn(id + " is not rotatable.");
-		});
-		this.list = this.list.stream().filter(e -> e.getDefaultState().getProperties().stream()
-				.anyMatch(p -> p instanceof DirectionProperty)).collect(Collectors.toList());
+		ConfigUtils.getList(name + "." + BLOCKS, json, DEFAULT_BLOCKS).stream()
+				.filter(e -> e instanceof String).map(e -> Registry.BLOCK.get(new Identifier((String) e)))
+				.forEach(e -> {
+					if (e.getDefaultState().getProperties().stream().noneMatch(p -> p instanceof DirectionProperty)) {
+						VanillaTweaks.LOGGER.warn(Registry.BLOCK.getId(e).toString() + " is not rotatable.");
+					} else {
+						this.list.add(e);
+					}
+				});
 	}
 
 	public List<Block> getIds() {
 		return this.list;
+	}
+
+	void setIds(List<Block> blocks) {
+		this.list = blocks;
 	}
 }
