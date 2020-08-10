@@ -2,8 +2,8 @@ package net.fabricmc.vanillaTweaks;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.vanillaTweaks.config.Config;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
+import net.fabricmc.vanillaTweaks.grave.PlayerGraveEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +17,14 @@ public class VanillaTweaks implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		if (CONFIG.REDSTONE_WRENCH.isEnabled() || CONFIG.TERRACOTTA_WRENCH.isEnabled()) {
-			Registry.register(Registry.ITEM, new Identifier(MOD_ID, "wrench"), new WrenchItem(new Item.Settings().group(ItemGroup.TOOLS).maxCount(1)));
+			Registry.register(Registry.ITEM, new Identifier(MOD_ID, "wrench"), Register.WRENCH);
+		}
+		if (CONFIG.GRAVES.isEnabled()) {
+			Identifier id = new Identifier(MOD_ID, "grave");
+			Registry.register(Registry.BLOCK, id, Register.GRAVE_BLOCK);
+			Registry.register(Registry.ITEM, id, Register.GRAVE_ITEM);
+			Register.PLAYER_GRAVE_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, id,
+					BlockEntityType.Builder.create(PlayerGraveEntity::new, Register.GRAVE_BLOCK).build(null));
 		}
 	}
 }
