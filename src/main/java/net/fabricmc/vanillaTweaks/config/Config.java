@@ -1,6 +1,43 @@
 package net.fabricmc.vanillaTweaks.config;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.vanillaTweaks.VanillaTweaks;
+
+import java.io.*;
+
 public class Config {
-	public static final WrenchItemConfig REDSTONE_WRENCH = new WrenchItemConfig("redstone_rotation_wrench");
-	public static final WrenchItemConfig TERRACOTTA_WRENCH = new WrenchItemConfig("terracotta_rotation_wrench");
+	private final File config;
+	public final WrenchItemConfig REDSTONE_WRENCH;
+	public final EnabledConfig TERRACOTTA_WRENCH;
+
+	public Config(String fileName) {
+		this.config = FabricLoader.getInstance().getConfigDir().resolve(fileName).toFile();
+
+		JsonObject json = this.loadJson();
+		TERRACOTTA_WRENCH = new EnabledConfig("terracotta_rotation_wrench", json);
+		REDSTONE_WRENCH = new WrenchItemConfig("redstone_rotation_wrench", json);
+		this.saveJson(json);
+	}
+
+	private void saveJson(JsonObject json) {
+		try (Writer writer = new FileWriter(this.config)) {
+			new GsonBuilder().setPrettyPrinting().create().toJson(json, writer);
+		} catch (IOException e) {
+			VanillaTweaks.LOGGER.warn("Something went wrong whilst saving the config file");
+		}
+	}
+
+	private JsonObject loadJson() {
+		if (this.config.isFile()) {
+			try {
+				return new Gson().fromJson(new FileReader(this.config), JsonObject.class);
+			} catch (FileNotFoundException ignored) {
+			}
+		}
+		VanillaTweaks.LOGGER.warn("Missing config file, generating one");
+		return new Gson().fromJson("", JsonObject.class);
+	}
 }

@@ -19,7 +19,7 @@
     ]
   },
   "mixins": [
-    "vanilla_tweaks.mixins.json"
+    "vt.mixins.json"
   ],
 
   "depends": {
