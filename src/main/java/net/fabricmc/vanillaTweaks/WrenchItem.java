@@ -35,12 +35,12 @@ public class WrenchItem extends Item {
 			BlockState state = world.getBlockState(result.getBlockPos());
 
 			//checks if glazed terracotta is being targeted
-			if (Config.TERRACOTTA_WRENCH.isEnabled() && state.getBlock() instanceof GlazedTerracottaBlock) {
+			if (VanillaTweaks.CONFIG.TERRACOTTA_WRENCH.isEnabled() && state.getBlock() instanceof GlazedTerracottaBlock) {
 				this.swapState(world, state, result.getBlockPos(), HorizontalFacingBlock.FACING, user.isSneaking());
 				return TypedActionResult.success(user.getStackInHand(hand));
 
 				//checks if a configured redstone blockType is being targeted
-			} else if (Config.REDSTONE_WRENCH.isEnabled() && Config.REDSTONE_WRENCH.getIds()
+			} else if (VanillaTweaks.CONFIG.REDSTONE_WRENCH.isEnabled() && VanillaTweaks.CONFIG.REDSTONE_WRENCH.getIds()
 					.stream().anyMatch(e -> e.equals(state.getBlock()))) {
 				DirectionProperty property = (DirectionProperty) state.getProperties().stream()
 						.filter(p -> p instanceof DirectionProperty).findFirst().get();
