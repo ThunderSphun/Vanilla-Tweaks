@@ -20,15 +20,6 @@ public class WrenchItem extends Item {
 
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-		BlockHitResult result = rayTrace(world, user, RayTraceContext.FluidHandling.NONE);
-		if (result.getType() == HitResult.Type.BLOCK) {
-			System.out.println(result.getBlockPos());
-			if (Config.TERRACOTTA_WRENCH.isEnabled() &&
-					world.getBlockState(result.getBlockPos()).getBlock() instanceof GlazedTerracottaBlock) {
-				System.out.println("it is a terracotta");
-				world.getBlockState(result.getBlockPos()).cycle(HorizontalFacingBlock.FACING);
-			}
-		}
 		return super.use(world, user, hand);
 	}
 }

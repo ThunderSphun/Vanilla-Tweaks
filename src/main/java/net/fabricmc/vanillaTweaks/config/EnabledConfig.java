@@ -1,5 +1,6 @@
 package net.fabricmc.vanillaTweaks.config;
 
+import com.google.gson.JsonObject;
 import io.github.fablabsmc.fablabs.api.fiber.v1.schema.type.BooleanSerializableType;
 import io.github.fablabsmc.fablabs.api.fiber.v1.schema.type.SerializableType;
 import io.github.fablabsmc.fablabs.api.fiber.v1.schema.type.derived.ConfigTypes;
@@ -12,21 +13,15 @@ public class EnabledConfig {
 	public static final String ENABLED = "enabled";
 	private boolean enabled;
 
-	public EnabledConfig(String name, ConfigBranch branch) {
-		ConfigBranch subBranch = branch.lookupBranch(name);
-		if (subBranch != null) {
-			ConfigLeaf<Boolean> node = subBranch.lookupLeaf(ENABLED, BooleanSerializableType.BOOLEAN);
-			if (node != null) {
-				this.enabled = node.getValue();
-			}
-		}
+	public EnabledConfig(String name, JsonObject json) {
+		this.enabled = ConfigUtils.getBoolean(name + "." + ENABLED, json, true);
 	}
 
 	public boolean isEnabled() {
 		return this.enabled;
 	}
 
-	public void setEnabled(boolean enabled) {
+	void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
 }
