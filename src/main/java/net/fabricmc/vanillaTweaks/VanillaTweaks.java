@@ -3,6 +3,7 @@ package net.fabricmc.vanillaTweaks;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.vanillaTweaks.config.Config;
 import net.fabricmc.vanillaTweaks.grave.PlayerGraveEntity;
+import net.fabricmc.vanillaTweaks.util.Register;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;

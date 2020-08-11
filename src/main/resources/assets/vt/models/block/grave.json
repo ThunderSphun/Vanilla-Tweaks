@@ -1,0 +1,7 @@
+{
+  "parent": "vt:block/grave_template",
+  "textures": {
+    "wall": "minecraft:block/cobblestone",
+    "ground": "minecraft:block/coarse_dirt"
+  }
+}

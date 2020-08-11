@@ -1,4 +1,4 @@
-package net.fabricmc.vanillaTweaks;
+package net.fabricmc.vanillaTweaks.util;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
@@ -11,14 +11,13 @@ public interface ImplementedInventory extends Inventory {
 
 	@Override
 	default int size() {
-		return getItems().size();
+		return this.getItems().size();
 	}
 
 	@Override
 	default boolean isEmpty() {
-		for (int i = 0; i < size(); i++) {
-			ItemStack stack = getStack(i);
-			if (!stack.isEmpty()) {
+		for (int i = 0; i < this.size(); i++) {
+			if (!this.getStack(i).isEmpty()) {
 				return false;
 			}
 		}
@@ -27,25 +26,36 @@ public interface ImplementedInventory extends Inventory {
 
 	@Override
 	default ItemStack getStack(int slot) {
-		return getItems().get(slot);
+		return this.getItems().get(slot);
 	}
 
 	@Override
 	default ItemStack removeStack(int slot, int count) {
-		ItemStack result = Inventories.splitStack(getItems(), slot, count);
+		ItemStack result = Inventories.splitStack(this.getItems(), slot, count);
 		if (!result.isEmpty()) {
-			markDirty();
+			this.markDirty();
 		}
 		return result;
 	}
 
+	default ItemStack getFirst() {
+		if (this.getItems().stream().anyMatch(e -> !e.isEmpty())) {
+			return this.getItems().stream().filter(e -> !e.isEmpty()).findFirst().get();
+		}
+		return ItemStack.EMPTY;
+	}
+
+	default int getSlot(ItemStack stack) {
+		return this.getItems().contains(stack) ? this.getItems().indexOf(stack) : -1;
+	}
+
 	default ItemStack removeStack(int slot) {
-		return Inventories.removeStack(getItems(), slot);
+		return Inventories.removeStack(this.getItems(), slot);
 	}
 
 	@Override
 	default void setStack(int slot, ItemStack stack) {
-		getItems().set(slot, stack);
+		this.getItems().set(slot, stack);
 		if (stack.getCount() > getMaxCountPerStack()) {
 			stack.setCount(getMaxCountPerStack());
 		}
@@ -53,10 +63,19 @@ public interface ImplementedInventory extends Inventory {
 
 	@Override
 	default void clear() {
-		getItems().clear();
+		this.getItems().clear();
 	}
 
 	@Override
 	default void markDirty() {
+	}
+
+	@Override
+	default boolean canPlayerUse(PlayerEntity player) {
+		return true;
+	}
+
+	default int getFirstEmptySlot() {
+		return this.getItems().indexOf(ItemStack.EMPTY);
 	}
 }

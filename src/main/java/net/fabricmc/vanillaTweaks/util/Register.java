@@ -1,5 +1,6 @@
-package net.fabricmc.vanillaTweaks;
+package net.fabricmc.vanillaTweaks.util;
 
+import net.fabricmc.vanillaTweaks.WrenchItem;
 import net.fabricmc.vanillaTweaks.grave.PlayerGraveBlock;
 import net.fabricmc.vanillaTweaks.grave.PlayerGraveEntity;
 import net.minecraft.block.Block;
