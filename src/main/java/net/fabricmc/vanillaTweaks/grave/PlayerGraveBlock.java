@@ -1,5 +1,6 @@
 package net.fabricmc.vanillaTweaks.grave;
 
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.vanillaTweaks.util.ImplementedInventory;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -29,19 +30,32 @@ public class PlayerGraveBlock extends Block implements BlockEntityProvider {
 	private static final VoxelShape WEST_SHAPE = VoxelShapes.union(GROUND_PLATE, Block.createCuboidShape(5, 2, 0, 0, 12, 16));
 
 	public PlayerGraveBlock() {
-		super(Settings.of(Material.SOIL, MaterialColor.DIRT).dropsNothing().sounds(BlockSoundGroup.GRAVEL));
+		super(FabricBlockSettings.of(Material.SOIL, MaterialColor.DIRT).strength(-1, 5).dropsNothing()
+				.sounds(BlockSoundGroup.GRAVEL));
 		setDefaultState(getStateManager().getDefaultState().with(FACING, Direction.NORTH));
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public void neighborUpdate(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean notify) {
+		if (world.getBlockState(pos.down()).getBlock() == Blocks.GRASS_BLOCK) {
+			world.setBlockState(pos.down(), Blocks.DIRT.getDefaultState());
+		}
 	}
 
 	@Override
 	public BlockState getPlacementState(ItemPlacementContext ctx) {
 		System.out.println("GetPlacementState");
+		World world = ctx.getWorld();
+		BlockPos pos = ctx.getBlockPos();
+		if (world.getBlockState(pos.down()).getBlock() == Blocks.GRASS_BLOCK) {
+			world.setBlockState(pos.down(), Blocks.DIRT.getDefaultState());
+		}
 		return getDefaultState().with(FACING, ctx.getPlayer() == null ? Direction.NORTH : ctx.getPlayer().getHorizontalFacing());
 	}
 
 	@Override
 	public BlockEntity createBlockEntity(BlockView world) {
-		System.out.println("CreateBlockEntity");
 		PlayerGraveEntity graveEntity = new PlayerGraveEntity();
 		return graveEntity;
 	}
@@ -53,7 +67,7 @@ public class PlayerGraveBlock extends Block implements BlockEntityProvider {
 			return ActionResult.PASS;
 		}
 
-		ImplementedInventory blockEntity = (PlayerGraveEntity) world.getBlockEntity(pos);
+		PlayerGraveEntity blockEntity = (PlayerGraveEntity) world.getBlockEntity(pos);
 		if (blockEntity == null) {
 			return ActionResult.PASS;
 		}
@@ -69,6 +83,10 @@ public class PlayerGraveBlock extends Block implements BlockEntityProvider {
 				player.inventory.setStack(i, blockEntity.getStack(i));
 			}
 		}
+		if (blockEntity.hasExperience()) {
+			player.addExperience(blockEntity.getExperience());
+		}
+
 		world.setBlockState(pos, Blocks.AIR.getDefaultState());
 		return ActionResult.SUCCESS;
 		/*if (player.getStackInHand(hand).isEmpty()) {

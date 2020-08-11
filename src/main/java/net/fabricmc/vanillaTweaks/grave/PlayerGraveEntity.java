@@ -1,5 +1,6 @@
 package net.fabricmc.vanillaTweaks.grave;
 
+import net.fabricmc.vanillaTweaks.util.ExperienceStorage;
 import net.fabricmc.vanillaTweaks.util.ImplementedInventory;
 import net.fabricmc.vanillaTweaks.util.Register;
 import net.minecraft.block.BlockState;
@@ -10,8 +11,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.collection.DefaultedList;
 
-public class PlayerGraveEntity extends BlockEntity implements ImplementedInventory {
+public class PlayerGraveEntity extends BlockEntity implements ImplementedInventory, ExperienceStorage {
 	private final DefaultedList<ItemStack> items = DefaultedList.ofSize(41, ItemStack.EMPTY);
+	private int xp;
 
 	public PlayerGraveEntity() {
 		super(Register.PLAYER_GRAVE_ENTITY);
@@ -37,5 +39,20 @@ public class PlayerGraveEntity extends BlockEntity implements ImplementedInvento
 	@Override
 	public boolean canPlayerUse(PlayerEntity player) {
 		return false;
+	}
+
+	@Override
+	public int getExperience() {
+		return this.xp;
+	}
+
+	@Override
+	public void setExperience(int experience) {
+		this.xp = experience;
+	}
+
+	@Override
+	public boolean hasExperience() {
+		return this.xp > 0;
 	}
 }
