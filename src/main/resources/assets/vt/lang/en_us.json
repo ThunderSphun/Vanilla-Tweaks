@@ -1,4 +1,9 @@
 {
 	"item.vt.wrench": "Wrench",
-	"block.vt.grave": "Grave"
+	"block.vt.grave": "Grave",
+	"block.vt.grave.tooltip_info": "How did you get this?",
+	"block.vt.grave.tooltip_placing": "Placing this grave wil give it",
+	"block.vt.grave.tooltip_inventory": "  your current inventory.",
+	"block.vt.grave.tooltip_xp": "  your current experience.",
+	"message.vt.grave.location": "§6Your last grave is at §r(%s, %s, %s)§6 in %s."
 }

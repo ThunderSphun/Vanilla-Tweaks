@@ -1,17 +1,23 @@
 package net.fabricmc.vanillaTweaks.grave;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.fabricmc.vanillaTweaks.util.ImplementedInventory;
+import net.fabricmc.vanillaTweaks.VanillaTweaks;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -20,6 +26,12 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static net.fabricmc.vanillaTweaks.VanillaTweaks.MOD_ID;
 
 public class PlayerGraveBlock extends Block implements BlockEntityProvider {
 	public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
@@ -44,8 +56,21 @@ public class PlayerGraveBlock extends Block implements BlockEntityProvider {
 	}
 
 	@Override
+	public void buildTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext options) {
+		List<TranslatableText> tooltips = new ArrayList<>();
+		tooltips.add(new TranslatableText("block." + MOD_ID + ".grave.tooltip_info"));
+		tooltips.add(new TranslatableText("block." + MOD_ID + ".grave.tooltip_placing"));
+		tooltips.add(new TranslatableText("block." + MOD_ID + ".grave.tooltip_inventory"));
+
+		if (VanillaTweaks.CONFIG.GRAVES.isCollectingXp()) {
+			tooltips.add(new TranslatableText("block." + MOD_ID + ".grave.tooltip_xp"));
+		}
+
+		tooltip.addAll(tooltips.stream().map(e -> e.formatted(Formatting.GRAY)).collect(Collectors.toList()));
+	}
+
+	@Override
 	public BlockState getPlacementState(ItemPlacementContext ctx) {
-		System.out.println("GetPlacementState");
 		World world = ctx.getWorld();
 		BlockPos pos = ctx.getBlockPos();
 		if (world.getBlockState(pos.down()).getBlock() == Blocks.GRASS_BLOCK) {
@@ -56,8 +81,7 @@ public class PlayerGraveBlock extends Block implements BlockEntityProvider {
 
 	@Override
 	public BlockEntity createBlockEntity(BlockView world) {
-		PlayerGraveEntity graveEntity = new PlayerGraveEntity();
-		return graveEntity;
+		return new PlayerGraveEntity();
 	}
 
 	@SuppressWarnings("deprecation")
@@ -71,41 +95,32 @@ public class PlayerGraveBlock extends Block implements BlockEntityProvider {
 		if (blockEntity == null) {
 			return ActionResult.PASS;
 		}
-
-		for (int i = 0; i < blockEntity.getItems().size(); i++) {
-			if (!blockEntity.getStack(i).isEmpty()) {
-				if (!player.inventory.getStack(i).isEmpty()) {
-					ItemEntity item = new ItemEntity(world, player.getX(), player.getY(), player.getZ(), player.inventory.getStack(i));
-					item.setOwner(player.getUuid());
-					item.setPickupDelay(5);
-					world.spawnEntity(item);
+		if (VanillaTweaks.CONFIG.GRAVES.isRobbing() ^ blockEntity.isGraveFrom(player)) {
+			for (int i = 0; i < blockEntity.getItems().size(); i++) {
+				if (!blockEntity.getStack(i).isEmpty()) {
+					if (!player.inventory.getStack(i).isEmpty()) {
+						ItemEntity item = new ItemEntity(world, player.getX(), player.getY(), player.getZ(), player.inventory.getStack(i));
+						item.setOwner(player.getUuid());
+						item.setPickupDelay(5);
+						world.spawnEntity(item);
+					}
+					player.inventory.setStack(i, blockEntity.getStack(i));
 				}
-				player.inventory.setStack(i, blockEntity.getStack(i));
 			}
-		}
-		if (blockEntity.hasExperience()) {
-			player.addExperience(blockEntity.getExperience());
-		}
+			if (blockEntity.hasExperience()) {
+				player.addExperience(blockEntity.getExperience());
+			}
 
-		world.setBlockState(pos, Blocks.AIR.getDefaultState());
-		return ActionResult.SUCCESS;
-		/*if (player.getStackInHand(hand).isEmpty()) {
-			int slot = blockEntity.getSlot(blockEntity.getFirst());
-			if (slot == -1) {
-				return ActionResult.PASS;
+			if (world.getRandom().nextInt(5) < 1) {
+				ItemEntity item = new ItemEntity(world, player.getX(), player.getY(), player.getZ(),
+						new ItemStack(Items.DIRT, world.getRandom().nextInt(3)));
+				item.setPickupDelay(5);
+				world.spawnEntity(item);
 			}
-			player.inventory.offerOrDrop(world, blockEntity.getStack(slot));
-			blockEntity.removeStack(slot);
+			world.setBlockState(pos, Blocks.AIR.getDefaultState());
 			return ActionResult.SUCCESS;
-		} else {
-			int slot = blockEntity.getFirstEmptySlot();
-			if (slot == -1) {
-				return ActionResult.PASS;
-			}
-			blockEntity.setStack(slot, player.getStackInHand(hand).copy());
-			player.getStackInHand(hand).setCount(0);
-			return ActionResult.SUCCESS;
-		}*/
+		}
+		return ActionResult.PASS;
 	}
 
 	@SuppressWarnings("deprecation")
