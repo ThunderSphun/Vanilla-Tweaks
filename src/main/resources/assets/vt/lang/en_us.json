@@ -1,5 +1,6 @@
 {
 	"item.vt.wrench": "Wrench",
+	"item.vt.grave_key": "Grave Key",
 	"block.vt.grave": "Grave",
 	"block.vt.grave.tooltip_info": "How did you get this?",
 	"block.vt.grave.tooltip_placing": "Placing this grave wil give it",

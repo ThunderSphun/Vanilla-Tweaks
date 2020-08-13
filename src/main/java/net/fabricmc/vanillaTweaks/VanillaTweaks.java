@@ -26,6 +26,9 @@ public class VanillaTweaks implements ModInitializer {
 			Registry.register(Registry.ITEM, id, Register.GRAVE_ITEM);
 			Register.PLAYER_GRAVE_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, id,
 					BlockEntityType.Builder.create(PlayerGraveEntity::new, Register.GRAVE_BLOCK).build(null));
+			if (CONFIG.GRAVES.getKeyConfig().isEnabled()) {
+				Registry.register(Registry.ITEM, new Identifier(MOD_ID, "grave_key"), Register.GRAVE_KEY);
+			}
 		}
 	}
 }

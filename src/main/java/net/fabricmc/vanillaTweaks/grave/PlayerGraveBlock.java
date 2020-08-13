@@ -2,6 +2,7 @@ package net.fabricmc.vanillaTweaks.grave;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.vanillaTweaks.VanillaTweaks;
+import net.fabricmc.vanillaTweaks.util.Register;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
@@ -95,7 +96,13 @@ public class PlayerGraveBlock extends Block implements BlockEntityProvider {
 		if (blockEntity == null) {
 			return ActionResult.PASS;
 		}
-		if (VanillaTweaks.CONFIG.GRAVES.isRobbing() ^ blockEntity.isGraveFrom(player)) {
+		if ((VanillaTweaks.CONFIG.GRAVES.getKeyConfig().isEnabled() && player.getStackInHand(hand).getItem() == Register.GRAVE_KEY) ||
+				(VanillaTweaks.CONFIG.GRAVES.isRobbing() || blockEntity.isGraveFrom(player))) {
+			if (player.getStackInHand(hand).getItem() == Register.GRAVE_KEY &&
+					VanillaTweaks.CONFIG.GRAVES.getKeyConfig().isSingleUse()) {
+				player.getStackInHand(hand).decrement(1);
+			}
+
 			for (int i = 0; i < blockEntity.getItems().size(); i++) {
 				if (!blockEntity.getStack(i).isEmpty()) {
 					if (!player.inventory.getStack(i).isEmpty()) {

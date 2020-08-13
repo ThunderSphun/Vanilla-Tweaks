@@ -9,6 +9,7 @@ public class GraveConfig extends EnabledConfig {
 	private boolean robbing;
 	private boolean collectingXp;
 	private boolean locating;
+	private GraveKeyConfig key;
 
 	public GraveConfig(String name, JsonObject json) {
 		super(name, json);
@@ -16,6 +17,7 @@ public class GraveConfig extends EnabledConfig {
 		this.robbing = ConfigUtils.getBoolean(name + "." + ROBBING, json, false);
 		this.collectingXp = ConfigUtils.getBoolean(name + "." + COLLECTING_XP, json, true);
 		this.locating = ConfigUtils.getBoolean(name + "." + LOCATING, json, true);
+		this.key = new GraveKeyConfig(name + "." + "grave key", json);
 	}
 
 	void setRobbing(boolean robbing) {
@@ -40,5 +42,9 @@ public class GraveConfig extends EnabledConfig {
 
 	public boolean isLocating() {
 		return this.locating;
+	}
+
+	public GraveKeyConfig getKeyConfig() {
+		return this.key;
 	}
 }
