@@ -30,23 +30,25 @@ public class WrenchItem extends Item {
 
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-		BlockHitResult result = rayTrace(world, user, RayTraceContext.FluidHandling.NONE);
-		if (result.getType() == HitResult.Type.BLOCK) {
-			BlockState state = world.getBlockState(result.getBlockPos());
+		if (!world.isClient()) {
+			BlockHitResult result = rayTrace(world, user, RayTraceContext.FluidHandling.NONE);
+			if (result.getType() == HitResult.Type.BLOCK) {
+				BlockState state = world.getBlockState(result.getBlockPos());
 
-			//checks if glazed terracotta is being targeted
-			if (VanillaTweaks.CONFIG.TERRACOTTA_WRENCH.isEnabled() && state.getBlock() instanceof GlazedTerracottaBlock) {
-				this.swapState(world, state, result.getBlockPos(), HorizontalFacingBlock.FACING, user.isSneaking());
-				return TypedActionResult.success(user.getStackInHand(hand));
+				//checks if glazed terracotta is being targeted
+				if (VanillaTweaks.CONFIG.TERRACOTTA_WRENCH.isEnabled() && state.getBlock() instanceof GlazedTerracottaBlock) {
+					this.swapState(world, state, result.getBlockPos(), HorizontalFacingBlock.FACING, user.isSneaking());
+					return TypedActionResult.success(user.getStackInHand(hand));
 
-				//checks if a configured redstone blockType is being targeted
-			} else if (VanillaTweaks.CONFIG.REDSTONE_WRENCH.isEnabled() && VanillaTweaks.CONFIG.REDSTONE_WRENCH.getIds()
-					.stream().anyMatch(e -> e.equals(state.getBlock()))) {
-				DirectionProperty property = (DirectionProperty) state.getProperties().stream()
-						.filter(p -> p instanceof DirectionProperty).findFirst().get();
+					//checks if a configured redstone blockType is being targeted
+				} else if (VanillaTweaks.CONFIG.REDSTONE_WRENCH.isEnabled() && VanillaTweaks.CONFIG.REDSTONE_WRENCH.getIds()
+						.stream().anyMatch(e -> e.equals(state.getBlock()))) {
+					DirectionProperty property = (DirectionProperty) state.getProperties().stream()
+							.filter(p -> p instanceof DirectionProperty).findFirst().get();
 
-				this.swapState(world, state, result.getBlockPos(), property, user.isSneaking());
-				return TypedActionResult.success(user.getStackInHand(hand));
+					this.swapState(world, state, result.getBlockPos(), property, user.isSneaking());
+					return TypedActionResult.success(user.getStackInHand(hand));
+				}
 			}
 		}
 		return TypedActionResult.pass(user.getStackInHand(hand));
