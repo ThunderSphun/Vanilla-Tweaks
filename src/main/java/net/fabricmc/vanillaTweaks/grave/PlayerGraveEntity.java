@@ -7,13 +7,16 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
+import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.Direction;
 
+import java.util.Collections;
 import java.util.UUID;
 
-public class PlayerGraveEntity extends BlockEntity implements ImplementedInventory, ExperienceStorage {
+public class PlayerGraveEntity extends BlockEntity implements ImplementedInventory, ExperienceStorage, SidedInventory {
 	private static final String XP_KEY = "xp";
 	private final DefaultedList<ItemStack> items = DefaultedList.ofSize(41, ItemStack.EMPTY);
 	private int xp;
@@ -74,5 +77,20 @@ public class PlayerGraveEntity extends BlockEntity implements ImplementedInvento
 
 	public boolean isGraveFrom(PlayerEntity player) {
 		return this.uuid == null || player.getUuid().equals(this.uuid);
+	}
+
+	@Override
+	public int[] getAvailableSlots(Direction side) {
+		return new int[0];
+	}
+
+	@Override
+	public boolean canInsert(int slot, ItemStack stack, Direction dir) {
+		return false;
+	}
+
+	@Override
+	public boolean canExtract(int slot, ItemStack stack, Direction dir) {
+		return false;
 	}
 }
