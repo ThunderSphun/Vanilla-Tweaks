@@ -12,6 +12,7 @@ public class Config {
 	private final File config;
 	public final WrenchItemConfig REDSTONE_WRENCH;
 	public final EnabledConfig TERRACOTTA_WRENCH;
+	public final GraveConfig GRAVES;
 
 	public Config(String fileName) {
 		this.config = FabricLoader.getInstance().getConfigDir().resolve(fileName).toFile();
@@ -19,6 +20,7 @@ public class Config {
 		JsonObject json = this.loadJson();
 		TERRACOTTA_WRENCH = new EnabledConfig("terracotta_rotation_wrench", json);
 		REDSTONE_WRENCH = new WrenchItemConfig("redstone_rotation_wrench", json);
+		GRAVES = new GraveConfig("player_graves", json);
 		this.saveJson(json);
 	}
 
