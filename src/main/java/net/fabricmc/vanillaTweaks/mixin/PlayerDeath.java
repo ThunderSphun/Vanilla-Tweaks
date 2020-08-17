@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
@@ -34,7 +35,8 @@ public abstract class PlayerDeath extends LivingEntity {
 	@Shadow
 	protected abstract void vanishCursedItems();
 
-	@Shadow public abstract void sendMessage(Text message, boolean actionBar);
+	@Shadow
+	public abstract void sendMessage(Text message, boolean actionBar);
 
 	@Inject(method = "dropInventory()V", at = @At("HEAD"), cancellable = true)
 	public void dropInventory(CallbackInfo info) {
@@ -54,25 +56,46 @@ public abstract class PlayerDeath extends LivingEntity {
 	}
 
 	private PlayerGraveEntity generateGrave() {
-		if (this.world.getBlockState(this.getBlockPos()).getBlock() != Register.GRAVE_BLOCK &&
+		BlockPos pos = getGenerationPos();
+		if (this.world.getBlockState(pos).getBlock() != Register.GRAVE_BLOCK &&
 				VanillaTweaks.CONFIG.GRAVES.isEnabled()) {
 
 			if (VanillaTweaks.CONFIG.GRAVES.isLocating()) {
 				this.sendMessage(new TranslatableText("message." + VanillaTweaks.MOD_ID + ".grave.location",
-						this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), this.world
-						.getDimensionRegistryKey().getValue()).formatted(Formatting.YELLOW), false);
+						pos.getX(), pos.getY(), pos.getZ(), this.world.getDimensionRegistryKey().getValue())
+						.formatted(Formatting.YELLOW), false);
 			}
-			this.world.setBlockState(this.getBlockPos(),
-					Register.GRAVE_BLOCK.getDefaultState().with(PlayerGraveBlock.FACING,
-							this.getHorizontalFacing().getOpposite()));
-			PlayerGraveEntity grave = (PlayerGraveEntity) this.world.getBlockEntity(this.getBlockPos());
+			this.world.setBlockState(pos, Register.GRAVE_BLOCK.getDefaultState()
+					.with(PlayerGraveBlock.FACING, this.getHorizontalFacing().getOpposite()));
+			PlayerGraveEntity grave = (PlayerGraveEntity) this.world.getBlockEntity(pos);
 			if (grave != null) {
 				grave.setUUID(this.uuid);
 			}
 		}
-		return (PlayerGraveEntity) this.world.getBlockEntity(this.getBlockPos());
+		return (PlayerGraveEntity) this.world.getBlockEntity(pos);
 	}
 
+	private BlockPos getGenerationPos() {
+		BlockPos pos = this.getBlockPos();
+		System.out.println("current pos: " + pos);
+		System.out.println("material replacable: " + this.world.getBlockState(pos).getMaterial().isReplaceable());
+		System.out.println("here topSurface here: " + this.world.getBlockState(pos).hasSolidTopSurface(this.world, pos, this));
+		System.out.println();
+		while (!this.world.getBlockState(pos.down()).hasSolidTopSurface(this.world, pos, this) ||
+				!this.world.getBlockState(pos).getMaterial().isReplaceable()) {
+			pos = pos.up();
+			System.out.println(pos);
+			if (pos.getY() >= this.world.getHeight()) {
+				pos = pos.down();
+				break;
+			} else if (this.world.getBlockState(pos).isAir()) {
+				break;
+			}
+		}
+		return pos;
+	}
+
+	@Override
 	public void dropXp() {
 		if (!isAlive() && VanillaTweaks.CONFIG.GRAVES.isCollectingXp()) {
 			if (!this.world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY)
