@@ -6,7 +6,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class ConfigUtils {
 	public static boolean getBoolean(String path, JsonObject json, boolean defaultValue) {
