@@ -14,6 +14,11 @@ public class ConfigUtils {
 				.getAsJsonPrimitive().getAsBoolean();
 	}
 
+	public static double getFloating(String path, JsonObject json, double defaultValue) {
+		return getLeafElement(path.split("\\."), new JsonPrimitive(defaultValue), json)
+				.getAsJsonPrimitive().getAsDouble();
+	}
+
 	public static List<Object> getList(String path, JsonObject json, List<Object> defaultValues) {
 		JsonArray array = getLeafElement(path.split("\\."), getJsonArrayFromList(defaultValues), json).getAsJsonArray();
 		return jsonArrayToList(array);
