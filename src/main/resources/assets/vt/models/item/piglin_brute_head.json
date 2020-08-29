@@ -1,6 +1,6 @@
 {
   "parent": "vt:item/template_textured_skull",
   "textures": {
-    "skull": "vt:mob_heads/piglin_brute"
+    "skull": "vt:mob_heads/piglin/piglin_brute"
   }
 }

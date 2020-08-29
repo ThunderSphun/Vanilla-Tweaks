@@ -1,6 +1,6 @@
 {
   "parent": "vt:item/template_textured_skull",
   "textures": {
-    "skull": "vt:mob_heads/wither_invulnerable_armored"
+    "skull": "vt:mob_heads/wither/wither_invulnerable_armored"
   }
 }
