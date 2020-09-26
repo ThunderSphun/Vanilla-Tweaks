@@ -12,9 +12,7 @@ import net.minecraft.item.Wearable;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
-import net.minecraft.world.RayTraceContext;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -40,11 +38,14 @@ public class HeadItem extends WallStandingBlockItem implements Wearable {
 
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-		if (rayTrace(world, user, RayTraceContext.FluidHandling.NONE).getType() != HitResult.Type.MISS &&
-				user.inventory.getArmorStack(EquipmentSlot.HEAD.getEntitySlotId()).isEmpty()) {
-			ItemStack item = user.getStackInHand(hand);
-
+		ItemStack itemStack = user.getStackInHand(hand);
+		EquipmentSlot equipmentSlot = EquipmentSlot.HEAD;
+		if (user.getEquippedStack(equipmentSlot).isEmpty()) {
+			user.equipStack(equipmentSlot, itemStack.copy());
+			itemStack.decrement(1);
+			return TypedActionResult.method_29237(itemStack, world.isClient());
+		} else {
+			return TypedActionResult.fail(itemStack);
 		}
-		return super.use(world, user, hand);
 	}
 }

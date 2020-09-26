@@ -4,6 +4,7 @@
   "package": "net.fabricmc.vanillaTweaks.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "Equipment",
     "PlayerDeath"
   ],
   "client": [
