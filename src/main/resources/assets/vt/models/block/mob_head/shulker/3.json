@@ -1,0 +1,6 @@
+{
+  "parent": "vt:block/mob_head/skull3",
+  "textures": {
+    "skull": "vt:mob_heads/shulker"
+  }
+}

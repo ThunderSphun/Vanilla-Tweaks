@@ -1,0 +1,8 @@
+{
+    "variants":{
+        "facing=north":{"model":"vt:block/mob_head/cat/siamese/wall", "y":180},
+        "facing=east":{"model":"vt:block/mob_head/cat/siamese/wall", "y":270},
+        "facing=south":{"model":"vt:block/mob_head/cat/siamese/wall"},
+        "facing=west":{"model":"vt:block/mob_head/cat/siamese/wall", "y":90}
+    }
+}

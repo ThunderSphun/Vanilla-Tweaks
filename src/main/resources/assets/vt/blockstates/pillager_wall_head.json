@@ -1,0 +1,8 @@
+{
+    "variants":{
+        "facing=north":{"model":"vt:block/mob_head/pillager/wall", "y":180},
+        "facing=east":{"model":"vt:block/mob_head/pillager/wall", "y":270},
+        "facing=south":{"model":"vt:block/mob_head/pillager/wall"},
+        "facing=west":{"model":"vt:block/mob_head/pillager/wall", "y":90}
+	}
+}

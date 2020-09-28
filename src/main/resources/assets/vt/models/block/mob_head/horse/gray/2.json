@@ -1,0 +1,6 @@
+{
+  "parent": "vt:block/mob_head/skull2",
+  "textures": {
+    "skull": "vt:mob_heads/horse/gray"
+  }
+}

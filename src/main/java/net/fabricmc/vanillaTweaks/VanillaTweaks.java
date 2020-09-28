@@ -2,9 +2,8 @@ package net.fabricmc.vanillaTweaks;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.vanillaTweaks.config.Config;
-import net.fabricmc.vanillaTweaks.config.MobHeadConfig;
 import net.fabricmc.vanillaTweaks.grave.PlayerGraveEntity;
-import net.fabricmc.vanillaTweaks.util.MobHeadMap;
+import net.fabricmc.vanillaTweaks.util.DebugRegister;
 import net.fabricmc.vanillaTweaks.util.Register;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.Identifier;
@@ -13,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class VanillaTweaks implements ModInitializer {
 	public static final String MOD_ID = "vt";
@@ -22,6 +20,8 @@ public class VanillaTweaks implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		DebugRegister.fix();
+
 		if (CONFIG.REDSTONE_WRENCH.isEnabled() || CONFIG.TERRACOTTA_WRENCH.isEnabled()) {
 			Registry.register(Registry.ITEM, new Identifier(MOD_ID, "wrench"), Register.WRENCH);
 		}

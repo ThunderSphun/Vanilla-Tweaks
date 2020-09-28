@@ -5,22 +5,17 @@
 
   "name": "Vanilla Tweaks",
   "description": "Vanilla Tweaks, but as a mod",
-  "authors": [
-    "ThunderSphun"
-  ],
+  "authors": ["ThunderSphun"],
 
   "license": "CC0-1.0",
-  "icon": "assets/vt/icon.png",
+  "icon": "assets/vt/pack.png",
 
   "environment": "*",
   "entrypoints": {
-    "main": [
-      "net.fabricmc.vanillaTweaks.VanillaTweaks"
-    ]
+    "main": ["net.fabricmc.vanillaTweaks.VanillaTweaks"],
+    "client": ["net.fabricmc.vanillaTweaks.Client"]
   },
-  "mixins": [
-    "vt.mixins.json"
-  ],
+  "mixins": ["vt.mixins.json"],
 
   "depends": {
     "fabricloader": ">=0.7.4",
