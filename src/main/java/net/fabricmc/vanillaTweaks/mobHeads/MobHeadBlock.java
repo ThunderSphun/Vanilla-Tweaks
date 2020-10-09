@@ -21,7 +21,7 @@ public class MobHeadBlock extends AbstractMobHead {
 	protected static final VoxelShape SHAPE = Block.createCuboidShape(4.0D, 0.0D, 4.0D, 12.0D, 8.0D, 12.0D);
 
 	public MobHeadBlock() {
-		super(Settings.of(Material.SUPPORTED).strength(1));
+		super(Settings.of(Material.SUPPORTED).strength(1).nonOpaque());
 		this.setDefaultState((this.stateManager.getDefaultState()).with(ROTATION, 0));
 	}
 

@@ -1,11 +1,15 @@
 package net.fabricmc.vanillaTweaks;
 
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.vanillaTweaks.config.Config;
 import net.fabricmc.vanillaTweaks.grave.PlayerGraveEntity;
 import net.fabricmc.vanillaTweaks.util.DebugRegister;
 import net.fabricmc.vanillaTweaks.util.Register;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class VanillaTweaks implements ModInitializer {
+public class VanillaTweaks implements ModInitializer, ClientModInitializer {
 	public static final String MOD_ID = "vt";
 	public static final Logger LOGGER = LogManager.getLogger();
 	public static final Config CONFIG = new Config("vanilla_tweaks.json");
@@ -41,7 +45,13 @@ public class VanillaTweaks implements ModInitializer {
 				Registry.register(Registry.BLOCK, new Identifier(MOD_ID, keys.get(i).getPath() + "_head"), Register.GROUND_HEADS.get(i));
 				Registry.register(Registry.BLOCK, new Identifier(MOD_ID, keys.get(i).getPath() + "_wall_head"), Register.WALL_HEADS.get(i));
 				Registry.register(Registry.ITEM, Registry.BLOCK.getId(Register.GROUND_HEADS.get(i)), Register.HEAD_ITEMS.get(i));
+				CONFIG.MORE_MOB_HEADS.getOdds().addHead(keys.get(i).toString(), Register.HEAD_ITEMS.get(i));
 			}
 		}
+	}
+
+	public void onInitializeClient() {
+		Register.GROUND_HEADS.forEach(e -> BlockRenderLayerMap.INSTANCE.putBlock(e, RenderLayer.getCutout()));
+		Register.WALL_HEADS.forEach(e -> BlockRenderLayerMap.INSTANCE.putBlock(e, RenderLayer.getCutout()));
 	}
 }

@@ -9,9 +9,9 @@ public class MobHeadConfig extends EnabledConfig {
 	private static final MobHeadMap DEFAULT_MAP = new MobHeadMap();
 
 	static {
-		String[] entities = 		{"minecraft:bat", "minecraft:blaze"	, "minecraft:cave_spider"	, "minecraft:chicken"	, "minecraft:cod"	, "minecraft:cow"	, "minecraft:dolphin"	, "minecraft:drowned"	, "minecraft:elder_guardian", "minecraft:enderman"	, "minecraft:endermite"	, "minecraft:evoker", "minecraft:ghast"	, "minecraft:guardian"	, "minecraft:hoglin", "minecraft:husk"	, "minecraft:illusioner", "minecraft:iron_golem", "minecraft:magma_cube", "minecraft:ocelot", "minecraft:phantom"	, "minecraft:pig"	, "minecraft:piglin", "minecraft:pillager"	, "minecraft:polar_bear", "minecraft:pufferfish", "minecraft:ravager"	, "minecraft:salmon", "minecraft:silverfish", "minecraft:slime"	, "minecraft:snow_golem", "minecraft:spider", "minecraft:squid"	, "minecraft:stray"	, "minecraft:strider"	, "minecraft:tropical_fish"	, "minecraft:turtle", "minecraft:vex"	, "minecraft:vindicator", "minecraft:wandering_trader"	, "minecraft:witch"	, "minecraft:zoglin", "minecraft:zombified_piglin"	, "minecraft:zombie_villager"	};
-		double[] dropRates = 		{10				, 0.5				, 0.5						, 1						, 10				, 1					, 33					, 5						, 100						, 0.5					, 10					, 25				, 6.25				, 0.5					, 3					, 6					, 25					, 5						, 0.5					, 20				, 10					, 1					, 4					, 2.5					, 20					, 15					, 25					, 10				, 5						, 0.5				, 5						, 0.5				, 5					, 6					, 10					, 10						, 10				, 10				, 5						, 100							, 0.5				, 20				, 0.5							, 50							};
-		double[] lootingModifiers = {2				, 0.05				, 1							, 0.1					, 1					, 0.1				, 2						, 2						, 0							, 0.01					, 1						, 2					, 1.25				, 0.1					, 2					, 1					, 2						, 1.5					, 0.1					, 2					, 1						, 0.1				, 1					, 0.5					, 5						, 1						, 2						, 1					, 1						, 0.1				, 1						, 0.1				, 1					, 5					, 5						, 1							, 1					, 1					, 1.5					, 0								, 0.1				, 5					, 0.1							, 2								};
+		String[] entities = {"minecraft:bat", "minecraft:blaze", "minecraft:cave_spider", "minecraft:chicken", "minecraft:cod", "minecraft:cow", "minecraft:dolphin", "minecraft:drowned", "minecraft:elder_guardian", "minecraft:enderman", "minecraft:endermite", "minecraft:evoker", "minecraft:ghast", "minecraft:guardian", "minecraft:hoglin", "minecraft:husk", "minecraft:illusioner", "minecraft:iron_golem", "minecraft:magma_cube", "minecraft:ocelot", "minecraft:phantom", "minecraft:pig", "minecraft:piglin", "minecraft:pillager", "minecraft:polar_bear", "minecraft:pufferfish", "minecraft:ravager", "minecraft:salmon", "minecraft:silverfish", "minecraft:slime", "minecraft:snow_golem", "minecraft:spider", "minecraft:squid", "minecraft:stray", "minecraft:strider", "minecraft:tropical_fish", "minecraft:turtle", "minecraft:vex", "minecraft:vindicator", "minecraft:wandering_trader", "minecraft:witch", "minecraft:zoglin", "minecraft:zombified_piglin", "minecraft:zombie_villager"};
+		double[] dropRates = {10, 0.5, 0.5, 1, 10, 1, 33, 5, 100, 0.5, 10, 25, 6.25, 0.5, 3, 6, 25, 5, 0.5, 20, 10, 1, 4, 2.5, 20, 15, 25, 10, 5, 0.5, 5, 0.5, 5, 6, 10, 10, 10, 10, 5, 100, 0.5, 20, 0.5, 50};
+		double[] lootingModifiers = {2, 0.05, 1, 0.1, 1, 0.1, 2, 2, 0, 0.01, 1, 2, 1.25, 0.1, 2, 1, 2, 1.5, 0.1, 2, 1, 0.1, 1, 0.5, 5, 1, 2, 1, 1, 0.1, 1, 0.1, 1, 5, 5, 1, 1, 1, 1.5, 0, 0.1, 5, 0.1, 2};
 
 		for (int i = 0; i < entities.length; i++) {
 			DEFAULT_MAP.add(entities[i], dropRates[i], lootingModifiers[i]);
@@ -20,6 +20,7 @@ public class MobHeadConfig extends EnabledConfig {
 		createVariants("minecraft:creeper", 100, 0, "charged");
 		createVariants("minecraft:piglin", 4, 1, "");
 		createVariants("minecraft:piglin", 10, 1, "brute");
+
 		createVariants("minecraft:horse", 20, 9, "donkey");
 		createVariants("minecraft:horse", 20, 5, "mule");
 		createVariants("minecraft:horse", 20, 5, "skeleton");
@@ -48,6 +49,9 @@ public class MobHeadConfig extends EnabledConfig {
 		super(name, json);
 
 		this.odds = DEFAULT_MAP;
+
+		DEFAULT_MAP.print();
+		DEFAULT_MAP.print();
 	}
 
 	private static void createVariants(String mob, double dropRate, double lootingModifier, String... variants) {
