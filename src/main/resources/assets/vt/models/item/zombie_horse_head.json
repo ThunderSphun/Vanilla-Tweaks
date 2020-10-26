@@ -1,0 +1,6 @@
+{
+  "parent": "vt:item/template_textured_skull",
+  "textures": {
+    "skull": "vt:mob_heads/zombie_horse"
+  }
+}

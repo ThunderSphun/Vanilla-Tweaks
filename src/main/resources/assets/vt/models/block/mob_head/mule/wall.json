@@ -1,0 +1,6 @@
+{
+  "parent": "vt:block/mob_head/skull_wall",
+  "textures": {
+    "skull": "vt:mob_heads/mule"
+  }
+}

@@ -1,8 +1,0 @@
-{
-    "variants":{
-        "facing=north":{"model":"vt:block/mob_head/horse/skeleton/wall", "y":180},
-        "facing=east":{"model":"vt:block/mob_head/horse/skeleton/wall", "y":270},
-        "facing=south":{"model":"vt:block/mob_head/horse/skeleton/wall"},
-        "facing=west":{"model":"vt:block/mob_head/horse/skeleton/wall", "y":90}
-    }
-}

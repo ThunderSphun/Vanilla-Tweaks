@@ -1,6 +1,0 @@
-{
-  "parent": "vt:block/mob_head/skull1",
-  "textures": {
-    "skull": "vt:mob_heads/horse/skeleton"
-  }
-}

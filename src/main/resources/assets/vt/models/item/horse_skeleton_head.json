@@ -1,6 +1,0 @@
-{
-  "parent": "vt:item/template_textured_skull",
-  "textures": {
-    "skull": "vt:mob_heads/horse/skeleton"
-  }
-}
