@@ -1,18 +1,27 @@
 package net.fabricmc.vanillaTweaks.mixin;
 
 import net.fabricmc.vanillaTweaks.VanillaTweaks;
+import net.fabricmc.vanillaTweaks.mobHeads.MobHead;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtHelper;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Mixin(LivingEntity.class)
 public abstract class MobHeadDrop extends Entity {
@@ -22,16 +31,21 @@ public abstract class MobHeadDrop extends Entity {
 
 	@Inject(method = "dropLoot(Lnet/minecraft/entity/damage/DamageSource;Z)V", at = @At("RETURN"))
 	protected void dropLoot(DamageSource source, boolean causedByPlayer, CallbackInfo ci) {
-		if (causedByPlayer && this.world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT) && !world.isClient) {
+		if (VanillaTweaks.CONFIG.MORE_MOB_HEADS.isEnabled() && causedByPlayer && !world.isClient
+				&& this.world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT)) {
+			List<MobHead> heads = VanillaTweaks.CONFIG.MORE_MOB_HEADS.getOdds()
+					.stream().filter(e -> e.equals(this)).sorted().collect(Collectors.toList());
+			if (heads.size() == 0) {
+				return;
+			}
 
-			if (VanillaTweaks.CONFIG.MORE_MOB_HEADS.getOdds().getValues(getType()) != null) {
-				double rate = VanillaTweaks.CONFIG.MORE_MOB_HEADS.getOdds().getOdd(getType(), source) / 100;
-				System.out.println(rate);
+			Optional<MobHead> head = heads.stream()
+					.filter(e -> NbtHelper.matches(e.getNbt(), toTag(new CompoundTag()), true)).findFirst();
 
-				if (VanillaTweaks.CONFIG.MORE_MOB_HEADS.isEnabled() && rate > world.random.nextDouble()) {
-					world.spawnEntity(new ItemEntity(world, getPos().x, getPos().y, getPos().z,
-							new ItemStack(VanillaTweaks.CONFIG.MORE_MOB_HEADS.getOdds().getHead(getType()))));
-				}
+			if (head.isPresent() && head.get().getOdd(source) >= world.random.nextDouble()) {
+				Identifier id = head.get().getId();
+				world.spawnEntity(new ItemEntity(world, getPos().x, getPos().y, getPos().z,
+						new ItemStack(Registry.ITEM.get(new Identifier(id.getNamespace(), id.getPath() + MobHead.GROUND)))));
 			}
 		}
 	}

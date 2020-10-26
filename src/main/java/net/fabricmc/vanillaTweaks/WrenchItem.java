@@ -15,7 +15,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.RayTraceContext;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class WrenchItem extends Item {
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 		if (!world.isClient()) {
-			BlockHitResult result = rayTrace(world, user, RayTraceContext.FluidHandling.NONE);
+			BlockHitResult result = raycast(world, user, RaycastContext.FluidHandling.NONE);
 			if (result.getType() == HitResult.Type.BLOCK) {
 				BlockState state = world.getBlockState(result.getBlockPos());
 

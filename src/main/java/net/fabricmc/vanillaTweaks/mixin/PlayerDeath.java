@@ -62,7 +62,7 @@ public abstract class PlayerDeath extends LivingEntity {
 
 			if (VanillaTweaks.CONFIG.GRAVES.isLocating()) {
 				this.sendMessage(new TranslatableText("message." + VanillaTweaks.MOD_ID + ".grave.location",
-						pos.getX(), pos.getY(), pos.getZ(), this.world.getDimensionRegistryKey().getValue())
+						pos.getX(), pos.getY(), pos.getZ(), this.world.getRegistryKey().getValue())
 						.formatted(Formatting.YELLOW), false);
 			}
 			this.world.setBlockState(pos, Register.GRAVE_BLOCK.getDefaultState()

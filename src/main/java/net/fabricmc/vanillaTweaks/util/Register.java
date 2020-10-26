@@ -34,7 +34,8 @@ public class Register {
 	//more mob heads tab, and blocks/blockItem lists
 	public static final ItemGroup MOB_HEAD_GROUP = FabricItemGroupBuilder.build(
 			new Identifier(VanillaTweaks.MOD_ID, "mob_heads"), () -> new ItemStack(Items.WITHER_SKELETON_SKULL));
-	public static final List<Block> GROUND_HEADS = VanillaTweaks.CONFIG.MORE_MOB_HEADS.getOdds().getKeysAsId().stream().map(e -> new MobHeadBlock()).collect(Collectors.toList());
+	public static final List<Block> GROUND_HEADS = VanillaTweaks.CONFIG.MORE_MOB_HEADS.getOdds().stream()
+			.map(e -> new MobHeadBlock()).collect(Collectors.toList());
 	public static final List<Block> WALL_HEADS = GROUND_HEADS.stream().map(WallMobHeadBlock::new).collect(Collectors.toList());
 	public static final List<Item> HEAD_ITEMS = IntStream.range(0, GROUND_HEADS.size()).mapToObj(e -> new HeadItem(GROUND_HEADS.get(e),
 			WALL_HEADS.get(e), new Item.Settings().maxCount(64).group(MOB_HEAD_GROUP).rarity(Rarity.UNCOMMON))).collect(Collectors.toList());

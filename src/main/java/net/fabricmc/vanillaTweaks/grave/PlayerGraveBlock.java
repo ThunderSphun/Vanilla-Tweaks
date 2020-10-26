@@ -57,7 +57,7 @@ public class PlayerGraveBlock extends Block implements BlockEntityProvider {
 	}
 
 	@Override
-	public void buildTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext options) {
+	public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext options) {
 		List<TranslatableText> tooltips = new ArrayList<>();
 		tooltips.add(new TranslatableText("block." + MOD_ID + ".grave.tooltip_info"));
 		tooltips.add(new TranslatableText("block." + MOD_ID + ".grave.tooltip_placing"));
