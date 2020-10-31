@@ -43,14 +43,12 @@ public class VanillaTweaks implements ModInitializer, ClientModInitializer {
 		}
 		if (CONFIG.MORE_MOB_HEADS.isEnabled()) {
 			List<Identifier> keys = CONFIG.MORE_MOB_HEADS.getOddsAsSortedList().stream().map(MobHead::getId).collect(Collectors.toList());
-			keys.forEach(System.out::println);
 			for (int i = 0; i < keys.size(); i++) {
 				Registry.register(Registry.BLOCK, new Identifier(MOD_ID, keys.get(i).getPath() + MobHead.GROUND), Register.GROUND_HEADS.get(i));
 				Registry.register(Registry.BLOCK, new Identifier(MOD_ID, keys.get(i).getPath() + MobHead.WALL), Register.WALL_HEADS.get(i));
 				Registry.register(Registry.ITEM, Registry.BLOCK.getId(Register.GROUND_HEADS.get(i)), Register.HEAD_ITEMS.get(i));
 			}
 		}
-		Registry.ENTITY_TYPE.getIds().forEach(System.out::println);
 	}
 
 	public void onInitializeClient() {

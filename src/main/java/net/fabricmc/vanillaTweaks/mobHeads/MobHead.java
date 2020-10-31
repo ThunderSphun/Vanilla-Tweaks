@@ -9,7 +9,9 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.StringNbtReader;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -20,28 +22,30 @@ public class MobHead implements Comparable<MobHead> {
 	public static final String WALL = "_wall_head";
 
 	private final EntityType<?> entity;
-	private final CompoundTag nbt;
-	private final double droprate;
-	private final double looting;
+	private final Tag nbt;
 	private final Identifier id;
+	private final double dropRate;
+	private final double looting;
+	private final boolean inverted;
 
-	public MobHead(EntityType<?> entity, CompoundTag nbt, double droprate, double looting, Identifier id) {
+	public MobHead(EntityType<?> entity, Tag nbt, double dropRate, double looting, Identifier id, boolean inverted) {
 		this.entity = entity;
 		this.nbt = nbt;
-		this.droprate = droprate;
+		this.dropRate = dropRate;
 		this.looting = looting;
 		this.id = id.getNamespace().equals("minecraft") ? new Identifier(VanillaTweaks.MOD_ID, id.getPath()) : id;
+		this.inverted = inverted;
 	}
 
 	public double getLooting() {
 		return this.looting;
 	}
 
-	public double getDroprate() {
-		return this.droprate;
+	public double getDropRate() {
+		return this.dropRate;
 	}
 
-	public CompoundTag getNbt() {
+	public Tag getNbt() {
 		return this.nbt;
 	}
 
@@ -56,7 +60,7 @@ public class MobHead implements Comparable<MobHead> {
 	public double getOddAsPercent(DamageSource source) {
 		if (source.getAttacker() instanceof LivingEntity) {
 			int level = EnchantmentHelper.getLooting((LivingEntity) source.getAttacker());
-			return this.droprate + level * this.looting;
+			return this.dropRate + level * this.looting;
 		}
 
 		return -1;
@@ -66,13 +70,17 @@ public class MobHead implements Comparable<MobHead> {
 		return getOddAsPercent(source) / 100;
 	}
 
+	public boolean matches(Tag tag) {
+		return NbtHelper.matches(tag, this.nbt, true) != this.inverted;
+	}
+
 	@Override
 	public String toString() {
 		return new StringJoiner(", ", getClass().getSimpleName() + "[", "]")
 				.add("entity=" + this.entity)
-				.add("nbt=" + this.nbt)
-				.add("droprate=" + this.droprate)
-				.add("looting=" + this.looting)
+				.add("nbt=" + (this.inverted ? "!" : "") + this.nbt)
+				.add("dropRate=" + this.dropRate + "%")
+				.add("looting=" + this.looting + "%")
 				.add("id=" + this.id)
 				.toString();
 	}
@@ -92,7 +100,7 @@ public class MobHead implements Comparable<MobHead> {
 	public boolean equals(Object obj) {
 		if (obj instanceof MobHead) {
 			MobHead other = (MobHead) obj;
-			return this.entity.equals(other.entity) && this.nbt.equals(other.nbt) && this.droprate == other.droprate &&
+			return this.entity.equals(other.entity) && this.nbt.equals(other.nbt) && this.dropRate == other.dropRate &&
 					this.looting == other.looting && this.id.equals(other.id);
 		}
 
@@ -112,17 +120,19 @@ public class MobHead implements Comparable<MobHead> {
 
 	public static class MobHeadBuilder {
 		private final EntityType<?> entity;
-		private CompoundTag nbt;
-		private double droprate;
-		private double looting;
+		private Tag nbt;
 		private Identifier id;
+		private double dropRate;
+		private double looting;
+		private boolean inverted;
 
 		public MobHeadBuilder(EntityType<?> entity) {
 			this.entity = entity;
 			this.nbt = new CompoundTag();
-			this.droprate = 0;
-			this.looting = 0;
 			this.id = Registry.ENTITY_TYPE.getId(this.entity);
+			this.dropRate = 0;
+			this.looting = 0;
+			this.inverted = false;
 		}
 
 		public MobHeadBuilder(String entity) {
@@ -133,26 +143,47 @@ public class MobHead implements Comparable<MobHead> {
 			this(Registry.ENTITY_TYPE.get(entity));
 		}
 
-		public MobHeadBuilder setNbt(CompoundTag nbt, String id) {
+		public MobHeadBuilder(Entity entity) {
+			this(entity.getType());
+		}
+
+		public MobHeadBuilder setNbt(Tag nbt, String id) {
 			return setNbt(nbt, new Identifier(id));
 		}
 
 		public MobHeadBuilder setNbt(String nbt, String id) throws CommandSyntaxException {
-			return setNbt(new StringNbtReader(new StringReader(nbt)).parseCompoundTag(), new Identifier(id));
+			return setNbt(nbt, new Identifier(id));
 		}
 
 		public MobHeadBuilder setNbt(String nbt, Identifier id) throws CommandSyntaxException {
-			return setNbt(new StringNbtReader(new StringReader(nbt)).parseCompoundTag(), id);
+			StringReader reader = new StringReader(nbt);
+			setInverted(isNegated(reader));
+			return setNbt(new StringNbtReader(reader).parseCompoundTag(), id);
 		}
 
-		public MobHeadBuilder setNbt(CompoundTag nbt, Identifier id) {
+		public MobHeadBuilder setNbt(Tag nbt, Identifier id) {
 			this.nbt = nbt;
 			this.id = id;
 			return this;
 		}
 
-		public MobHeadBuilder setDroprate(double droprate) {
-			this.droprate = droprate;
+		private boolean isNegated(StringReader reader) {
+			reader.skipWhitespace();
+			if (reader.canRead() && reader.peek() == '!') {
+				reader.skip();
+				reader.skipWhitespace();
+				return true;
+			}
+			return false;
+		}
+
+		public MobHeadBuilder setInverted(boolean inverted) {
+			this.inverted = inverted;
+			return this;
+		}
+
+		public MobHeadBuilder setDropRate(double dropRate) {
+			this.dropRate = dropRate;
 			return this;
 		}
 
@@ -161,14 +192,14 @@ public class MobHead implements Comparable<MobHead> {
 			return this;
 		}
 
-		public MobHeadBuilder setRates(double droprate, double looting) {
-			this.droprate = droprate;
+		public MobHeadBuilder setRates(double dropRate, double looting) {
+			this.dropRate = dropRate;
 			this.looting = looting;
 			return this;
 		}
 
 		public MobHead build() {
-			return new MobHead(this.entity, this.nbt, this.droprate, this.looting, this.id);
+			return new MobHead(this.entity, this.nbt, this.dropRate, this.looting, this.id, this.inverted);
 		}
 	}
 }
